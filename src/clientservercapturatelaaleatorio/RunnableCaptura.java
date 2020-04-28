@@ -27,73 +27,69 @@ public class RunnableCaptura implements Runnable {
     double hs;
     double ws;
 
-    public RunnableCaptura(double hs, double ws, double he, double we, BufferedImage bi, DatagramSocket senderSocket,
-            InetAddress ipDestino) {
-        this.bi = bi;
+    public RunnableCaptura(DatagramSocket senderSocket, InetAddress ipDestino) {
         this.ipDestino = ipDestino;
         this.senderSocket = senderSocket;
-
-        this.he = he;
-        this.we = we;
-
-        this.hs = hs;
-        this.he = he;
     }
 
     @Override
     public void run() {
 
         try {
+            Robot robot = new Robot();
 
-            // capturei
-            // a tela
-            // toda
+            while (true) {
+                // capturei
+                // a tela
+                // toda
 
-            for (int i = (int) hs; i < he; i++) {
-                for (int k = (int) ws; j < we; j++) {
+                BufferedImage bi = robot.createScreenCapture(new Rectangle(Util.RESOLUCAO_X, Util.RESOLUCAO_Y));
 
-                    int posX = i; // poder sortear
-                                                                                          // um local da
-                                                                                          // tela sem sair
-                                                                                          // dela
-                    int posY = k; // poder sortear
-                                                                                          // um local da
-                                                                                          // tela sem sair
-                                                                                          // dela
+                for (int i = 0; i < 10; i++) {
+                    for (int k = 0; k < 10; k++) {
 
-                    // arqui poderia ser lancado uma Thread
-                    int aux = 0;
-                    for (int y = 0; y < Util.BLOCK_Y; y++) {
-                        for (int x = 0; x < Util.BLOCK_X; x++) {
+                        int posX = (int) (Math.random() * (Util.RESOLUCAO_X - Util.BLOCK_X)); // poder sortear
+                        // um local da
+                        // tela sem sair
+                        // dela
+                        int posY = (int) (Math.random() * (Util.RESOLUCAO_Y - Util.BLOCK_Y)); // poder sortear
+                        // um local da
+                        // tela sem sair
+                        // dela
 
-                            int cor = bi.getRGB(posX + x, posY + y); // ARGB
+                        // arqui poderia ser lancado uma Thread
+                        int aux = 0;
+                        for (int y = 0; y < Util.BLOCK_Y; y++) {
+                            for (int x = 0; x < Util.BLOCK_X; x++) {
 
-                            byte auxBuffer[] = Util.integerToBytes(cor);
-                            for (int j = 0; j < auxBuffer.length; j++) {
-                                buffer[aux++] = auxBuffer[j];
+                                int cor = bi.getRGB(posX + x, posY + y); // ARGB
+
+                                byte auxBuffer[] = Util.integerToBytes(cor);
+                                for (int j = 0; j < auxBuffer.length; j++) {
+                                    buffer[aux++] = auxBuffer[j];
+                                }
                             }
                         }
+
+                        // bytes do posX
+                        byte auxBufferPosX[] = Util.integerToBytes(posX);
+                        for (int j = 0; j < auxBufferPosX.length; j++) {
+                            buffer[aux++] = auxBufferPosX[j];
+                        }
+
+                        // bytes do posY
+                        byte auxBufferPosY[] = Util.integerToBytes(posY);
+                        for (int j = 0; j < auxBufferPosY.length; j++) {
+                            buffer[aux++] = auxBufferPosY[j];
+                        }
+
+                        DatagramPacket enviaPacote = new DatagramPacket(buffer, buffer.length, ipDestino, Util.PORTA);
+                        senderSocket.send(enviaPacote);
+
+                        Thread.sleep(10);
                     }
-
-                    // bytes do posX
-                    byte auxBufferPosX[] = Util.integerToBytes(posX);
-                    for (int j = 0; j < auxBufferPosX.length; j++) {
-                        buffer[aux++] = auxBufferPosX[j];
-                    }
-
-                    // bytes do posY
-                    byte auxBufferPosY[] = Util.integerToBytes(posY);
-                    for (int j = 0; j < auxBufferPosY.length; j++) {
-                        buffer[aux++] = auxBufferPosY[j];
-                    }
-
-                    DatagramPacket enviaPacote = new DatagramPacket(buffer, buffer.length, ipDestino, Util.PORTA);
-                    senderSocket.send(enviaPacote);
-
-                    Thread.sleep(10);
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

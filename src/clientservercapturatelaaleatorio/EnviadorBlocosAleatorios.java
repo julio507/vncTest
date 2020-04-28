@@ -31,19 +31,11 @@ public class EnviadorBlocosAleatorios {
 
             Robot robot = new Robot();
 
-            while( true )
-            {
-                BufferedImage bi = robot
-                        .createScreenCapture(new Rectangle(Util.RESOLUCAO_X, Util.RESOLUCAO_Y));
-
-                double ht = h / 4;
-                double wt = w / 4;
-
-                new Thread( new RunnableCaptura( 0, 0, ht * 1, wt * 1, bi, senderSocket, ipDestino ) ).start();
-                new Thread( new RunnableCaptura( 0, wt * 1, ht * 1, wt * 2, bi, senderSocket, ipDestino ) ).start();
-                new Thread( new RunnableCaptura( ht * 1, wt * 2, ht * 2, wt * 2, bi, senderSocket, ipDestino ) ).start();
-                new Thread( new RunnableCaptura( ht * 2, wt * 2, bi, senderSocket, ipDestino ) ).start();
-            }
+            
+            new Thread( new RunnableCaptura( senderSocket, ipDestino ) ).start();
+            new Thread( new RunnableCaptura(   senderSocket, ipDestino ) ).start();
+            new Thread( new RunnableCaptura(   senderSocket, ipDestino ) ).start();
+            new Thread( new RunnableCaptura(  senderSocket, ipDestino ) ).start();
             
 
         } catch (Exception e) {
